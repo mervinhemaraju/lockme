@@ -1,9 +1,11 @@
 package com.th3pl4gu3.lockme
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
@@ -36,7 +38,6 @@ class MainActivity : ComponentActivity() {
             /**
              *  Send a custom event to trigger the lock event
              **/
-
             with(getAccessibilityEventAnnouncement()) {
                 this.eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT
                 this.packageName = applicationContext.packageName
@@ -45,21 +46,17 @@ class MainActivity : ComponentActivity() {
                 manager.sendAccessibilityEvent(this)
             }
         }else{
+            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+
             Toast.makeText(
                 this,
-                "You need to allow Lock me as a service in accessibility.",
+                "You need to allow Lock me as a service in accessibility to continue.",
                 Toast.LENGTH_LONG
             ).show()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        /**
-         * Finish the activity after it goes off screen
-         **/
-        this.finish()
+        finish()
     }
 
     private fun getAccessibilityEventAnnouncement(): AccessibilityEvent =

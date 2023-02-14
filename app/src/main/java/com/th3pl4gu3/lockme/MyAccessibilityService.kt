@@ -15,7 +15,10 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         Log.i(TAG, "Event change triggered: ${event.eventType} & ${event.packageName}")
-        Log.i(TAG, "Current data: ${AccessibilityEvent.TYPE_ANNOUNCEMENT} & ${applicationContext.packageName}")
+        Log.i(
+            TAG,
+            "Current data: ${AccessibilityEvent.TYPE_ANNOUNCEMENT} & ${applicationContext.packageName}"
+        )
 
         if (
             event.eventType == AccessibilityEvent.TYPE_ANNOUNCEMENT &&
