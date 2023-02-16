@@ -9,8 +9,10 @@ import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
-import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import com.th3pl4gu3.lockme.ui.LockMeApp
+import com.th3pl4gu3.lockme.ui.theme.LockMeTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -20,15 +22,27 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         /**
          * Get the Accessibility Manager
          **/
         val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
 
         /**
-         * Verify that it has been enabled
+         * Verify if the user needs to see the UI
+         * If the user doesn't need to see the UI, change the
+         * activity theme
+         **/
+        if (!manager.isEnabled) {
+            setTheme(android.R.style.Theme_NoTitleBar)
+        }
+
+        /**
+         * Call the onCreate parent method
+         **/
+        super.onCreate(savedInstanceState)
+
+        /**
+         * Verify that Accessibility Services has been enabled
          **/
         if (manager.isEnabled) {
 
@@ -45,18 +59,19 @@ class MainActivity : ComponentActivity() {
                 this.isEnabled = true
                 manager.sendAccessibilityEvent(this)
             }
-        }else{
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
 
-            Toast.makeText(
-                this,
-                "You need to allow Lock me as a service in accessibility to continue.",
-                Toast.LENGTH_LONG
-            ).show()
+            finish()
+        } else {
+            Log.i("TESTING", "Setting content")
+            setContent {
+                LockMeTheme {
+                    LockMeApp(
+                        closeAppAction = { finish() },
+                        openSettingsUiAction = { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); finish() }
+                    )
+                }
+            }
         }
-        finish()
     }
 
     private fun getAccessibilityEventAnnouncement(): AccessibilityEvent =
