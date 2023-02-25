@@ -1,16 +1,16 @@
 package com.th3pl4gu3.lockme
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES.R
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-
-
 class MainActivity : ComponentActivity() {
 
     companion object {
@@ -18,6 +18,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        /**
+         * Call the onCreate parent method
+         **/
         super.onCreate(savedInstanceState)
 
         /**
@@ -26,9 +29,14 @@ class MainActivity : ComponentActivity() {
         val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
 
         /**
-         * Verify that it has been enabled
+         * Verify that Accessibility Services has been enabled
          **/
-        if (manager.isEnabled) {
+        val isServiceEnabled = manager.getEnabledAccessibilityServiceList(AccessibilityEvent.TYPES_ALL_MASK).any{ it.id.startsWith(this.packageName)}
+
+        /**
+         * Verify that both the manager has been enabled and the service as well
+         **/
+        if (manager.isEnabled && isServiceEnabled) {
 
             // Log data
             Log.i(TAG, "Manager is enabled. Sending announcement event")
@@ -36,7 +44,6 @@ class MainActivity : ComponentActivity() {
             /**
              *  Send a custom event to trigger the lock event
              **/
-
             with(getAccessibilityEventAnnouncement()) {
                 this.eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT
                 this.packageName = applicationContext.packageName
@@ -44,24 +51,23 @@ class MainActivity : ComponentActivity() {
                 this.isEnabled = true
                 manager.sendAccessibilityEvent(this)
             }
-        }else{
+        } else {
+            Log.i(TAG, "Accessibility services not enabled. Launching intent")
+
             Toast.makeText(
                 this,
-                "You need to allow Lock me as a service in accessibility.",
-                Toast.LENGTH_LONG
+                "You need to allow Lock Me in Accessibility Services",
+                Toast.LENGTH_SHORT
             ).show()
+
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
     }
+    override fun onStart() {
+        super.onStart()
 
-    override fun onPause() {
-        super.onPause()
-
-        /**
-         * Finish the activity after it goes off screen
-         **/
-        this.finish()
+        finish()
     }
-
     private fun getAccessibilityEventAnnouncement(): AccessibilityEvent =
         if (Build.VERSION.SDK_INT >= R) {
             AccessibilityEvent()

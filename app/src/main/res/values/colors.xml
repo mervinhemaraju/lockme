@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="teal_900">#006064</color>
-    <color name="teal_300">#4DD0E1</color>
     <color name="teal_50">#E0F7FA</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
 
     <!-- Launcher Icon Colors -->
     <color name="ic_launcher_background">@color/teal_50</color>
