@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Lock Me</string>
+
     <string name="accessibility_service_description">
         Lock me uses Accessibility Service to perform screen locks operations every time you
         tap on the Lock Me app.

@@ -4,10 +4,6 @@ plugins {
 }
 
 android {
-    signingConfigs {
-        release
-        beta
-    }
     namespace app_id
     compileSdk 33
 
@@ -20,30 +16,15 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
-            useSupportLibrary true
+            useSupportLibrary false
         }
     }
 
     buildTypes {
-        release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-        beta {
-            versionNameSuffix version_suffix_beta
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-            matchingFallbacks = ['debug']
-        }
         debug {
-            versionNameSuffix version_suffix_dev
-            debuggable true
-            minifyEnabled false
-            shrinkResources false
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.debug
         }
@@ -68,47 +49,6 @@ android {
     }
 }
 
-
-// Create a variable called keystorePropertiesFile, and initialize it to your
-// keystore.properties file, in the rootProject folder.
-def props = new Properties()
-def propFile = new File("keystore.properties")
-
-// Check if we can read the file
-if (propFile.canRead()) {
-    props.load(new FileInputStream(propFile))
-
-    // Before assigning, we check if key is present
-    if (props != null && props.containsKey('STORE_FILE') && props.containsKey('STORE_PASSWORD') && props.containsKey('KEY_ALIAS') && props.containsKey('KEY_PASSWORD')) {
-        // Load release configs
-        android.signingConfigs.release.storeFile = file(props['STORE_FILE'])
-        android.signingConfigs.release.storePassword = props['STORE_PASSWORD']
-        android.signingConfigs.release.keyAlias = props['KEY_ALIAS']
-        android.signingConfigs.release.keyPassword = props['KEY_PASSWORD']
-
-        // Load beta configs
-        android.signingConfigs.beta.storeFile = file(props['STORE_FILE'])
-        android.signingConfigs.beta.storePassword = props['STORE_PASSWORD']
-        android.signingConfigs.beta.keyAlias = props['KEY_ALIAS']
-        android.signingConfigs.beta.keyPassword = props['KEY_PASSWORD']
-    } else {
-        println 'signing.properties found but some entries are missing'
-        android.buildTypes.release.signingConfig = null
-        android.buildTypes.beta.signingConfig = null
-    }
-} else {
-    println 'signing.properties not found'
-    android.buildTypes.release.signingConfig = null
-    android.buildTypes.beta.signingConfig = null
-}
-
 dependencies {
-    implementation 'androidx.activity:activity-compose:1.6.1'
-    // Android Material Design Components
-    implementation "androidx.compose.material3:material3:$material3_version"
-    // Android Compose UI
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-util:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.activity:activity-compose:$activity_compose_version"
 }

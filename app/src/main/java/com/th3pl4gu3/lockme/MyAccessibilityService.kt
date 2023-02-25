@@ -31,11 +31,11 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        Log.i("EVENT_CHANGE_HIT", "Service connected")
+        Log.i(TAG, "Service connected")
     }
 
     override fun onInterrupt() {
-        Log.i("EVENT_CHANGE_HIT", "Service interrupted")
+        Log.i(TAG, "Service interrupted")
     }
 
     private fun performLock() {
